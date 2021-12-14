@@ -1,7 +1,7 @@
 <template>
     <div>
       <img class="img" :src="imageSrc" :alt="message.fileName" />
-      <h1>{{ message.fileName }}</h1>
+      <h4 class="img-title">{{ message.fileName }}</h4>
     </div>
 </template>
 
@@ -52,5 +52,8 @@ export default {
   .img {
     width: 150px;
     height: auto;
+  }
+  .img-title {
+    margin: 5px 0px;
   }
 </style>

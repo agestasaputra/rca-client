@@ -11,17 +11,21 @@
       <div class="wrapper">
         <div class="list-container">
           <div v-for="message in messages" :key="message.id">
-            <span>
-              <strong>
-                {{ message.user }} :
-              </strong>
+            <div>
+              <span 
+                :style="`color: ${message.color}`"
+              >
+                <strong>
+                  {{ message.user }} :
+                </strong>
+              </span>
               <span v-if="message.type === 'file'" class="message-file">
                 <Image :message="message" />
               </span>
               <span v-else class="message-text">
                 {{ message.body}}
               </span>
-            </span>
+            </div>
           </div>
         </div>
         <span v-if="isTyping && isTyping !== currentUser"> {{ isTyping }} is typing... </span>
@@ -53,6 +57,7 @@ export default {
   components: { Image },
   setup() {
     const state = reactive({
+      color: '',
       isTyping: false,
       isJoined: false,
       isChatted: false,
@@ -116,8 +121,17 @@ export default {
           state.isTyping = false;
         }
       )
-    }
 
+      state.color = onGetRandomColor()
+    }
+    function onGetRandomColor() {
+      let letters = '0123456789ABCDEF';
+      let color = '#';
+      for (let i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+      }
+      return color;
+    }
     function onSendMessage() {
       try {
         let message = {}
@@ -135,6 +149,7 @@ export default {
         } else {
           message = {
             id: new Date().getTime(),
+            color: state.color,
             user: state.currentUser,
             type: "text",
             body: state.text,
@@ -165,6 +180,7 @@ export default {
     return {
       ...toRefs(state),
       onJoin,
+      onGetRandomColor,
       onSendMessage,
       onAttachedFile
     }
@@ -211,9 +227,6 @@ export default {
   .list-container {
     flex: 1;
   }
-  .text-input-container {
-    gap: 5px;
-  }
   .text-message {
     width: 100%;
     height: 70px;
@@ -227,6 +240,10 @@ export default {
   }
   .top-input {
     display: flex;
-    flex-flow: row;
+    flex-flow: row; 
+    gap: 5px;
+  }
+  .bottom-input {
+    margin-top: 5px;
   }
 </style>

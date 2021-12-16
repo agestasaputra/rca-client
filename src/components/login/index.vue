@@ -25,6 +25,7 @@
               <span v-else class="message-text">
                 {{ message.body}}
               </span>
+              <button @click="onDelete(message)"> Delete </button>
             </div>
           </div>
         </div>
@@ -107,6 +108,11 @@ export default {
 
       // recieved message from socket
       state.socketInstance.on(
+        "message:chat-remove", (data) => {
+          state.messages = data;
+        }
+      )
+      state.socketInstance.on(
         "message:chat", (data) => {
           state.messages = state.messages.concat(data);
         }
@@ -131,6 +137,11 @@ export default {
         color += letters[Math.floor(Math.random() * 16)];
       }
       return color;
+    }
+    function onDelete(message) {
+      const resultIndex = state.messages.findIndex((msg) => msg.id === message.id);
+      state.messages.splice(resultIndex, 1);
+      state.socketInstance.emit('messageRemove', state.messages);
     }
     function onSendMessage() {
       try {
@@ -182,6 +193,7 @@ export default {
       onJoin,
       onGetRandomColor,
       onSendMessage,
+      onDelete,
       onAttachedFile
     }
   }
